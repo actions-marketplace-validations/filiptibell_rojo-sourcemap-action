@@ -118,8 +118,8 @@ const cleanupPath = (path, root) => {
 	}
 	// Replace all parts in path where we backtrack
 	// This pattern consists of "(non-slash-stuff)/../"
-	const BACKTRACK = /\/([^\/]+)\/\.\.\//gi
-	path = path.replace(BACKTRACK, '/')
+	const BACKTRACK = /([^\/]+)\/\.\.\//gi
+	path = path.replace(BACKTRACK, '')
 	// Return result
 	return path;
 }

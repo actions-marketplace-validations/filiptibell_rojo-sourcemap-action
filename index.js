@@ -269,6 +269,12 @@ const createSourceMap = (config) => {
 		// Why do we need to do this :( why can Rojo not just export
 		// this data somewhere in the cli... it already exists... oh well
 		const rojo = spawn('rojo', ['serve', config.projectPath]);
+		// Create superkill helper function
+		const superkill = () => {
+			rojo.kill('SIGTERM');
+			rojo.kill('SIGHUP');
+			rojo.kill('SIGINT');
+		}
 		// Check for output saying the server
 		// is listening and also if it errors
 		rojo.stdout.on('data', async (data) => {
@@ -301,6 +307,8 @@ const createSourceMap = (config) => {
 					method: 'GET',
 					url: 'http://localhost:34872/show-instances',
 				}).then(data => {
+					// Kill rojo now that we no longer need it
+					superkill();
 					// Emit processing message
 					console.log('')
 					console.log("Processing...")
@@ -324,10 +332,8 @@ const createSourceMap = (config) => {
 					reject(err);
 				});
 			}
-			// Try to kill rojo
-			rojo.kill('SIGTERM')
-			rojo.kill('SIGHUP')
-			rojo.kill('SIGINT')
+			// Try to kill rojo if not already killed
+			superkill();
 			// Reject if errored, resolve is above
 			// if we started rojo and didn't error
 			if (rojoError) {

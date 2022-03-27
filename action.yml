@@ -1,4 +1,4 @@
-name: 'Rojo Sourcemap'
+name: 'Rojo Sourcemap Action'
 
 description: 'Creates a source map JSON file for a Rojo project'
 

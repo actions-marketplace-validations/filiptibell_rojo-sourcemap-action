@@ -13312,14 +13312,14 @@ const cleanupPath = (path, root) => {
 	// path relative to the root of the repository
 	if (root && path.startsWith(root)) {
 		path = path.slice(root.length);
-	}
-	if (path.startsWith('/')) {
-		path = path.slice(1);
+		if (path.startsWith('/')) {
+			path = path.slice(1);
+		}
 	}
 	// Replace all parts in path where we backtrack
 	// This pattern consists of "(non-slash-stuff)/../"
-	const BACKTRACK = /\/([^\/]+)\/\.\.\//gi
-	path = path.replace(BACKTRACK, '/')
+	const BACKTRACK = /([^\/]+)\/\.\.\//gi
+	path = path.replace(BACKTRACK, '')
 	// Return result
 	return path;
 }

@@ -4,6 +4,8 @@ const fs = require('fs');
 
 const HTMLParser = require('node-html-parser');
 
+const findProcess = require('find-process');
+
 const { spawn } = require('child_process');
 
 require('dotenv').config();
@@ -269,11 +271,26 @@ const createSourceMap = (config) => {
 		// Why do we need to do this :( why can Rojo not just export
 		// this data somewhere in the cli... it already exists... oh well
 		const rojo = spawn('rojo', ['serve', config.projectPath]);
+		// Create process killing helper function
+		const trykill = (signal) => {
+			// First, try killing the "official" way
+			rojo.kill(signal);
+			// Second, find rojo pid by port and kill it manually
+			findProcess('port', 34872).then(list => {
+				for (const proc of list.values()) {
+					try {
+						process.kill(proc.pid, signal);
+					} catch {
+						
+					}
+				}
+			});
+		}
 		// Create superkill helper function
 		const superkill = () => {
-			rojo.kill('SIGTERM');
-			rojo.kill('SIGHUP');
-			rojo.kill('SIGINT');
+			setTimeout(() => { trykill('SIGTERM') }, 0);
+			setTimeout(() => { trykill('SIGHUP')  }, 50);
+			setTimeout(() => { trykill('SIGINT')  }, 100);
 		}
 		// Check for output saying the server
 		// is listening and also if it errors
@@ -331,9 +348,10 @@ const createSourceMap = (config) => {
 				}).catch(err => {
 					reject(err);
 				});
+			} else if (rojoError) {
+				// Kill rojo asap
+				superkill();
 			}
-			// Try to kill rojo if not already killed
-			superkill();
 			// Reject if errored, resolve is above
 			// if we started rojo and didn't error
 			if (rojoError) {

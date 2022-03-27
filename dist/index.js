@@ -11682,7 +11682,7 @@ const run = async (config) => {
 	// know how to do this in parallel, but that
 	// might speed the action up some more
 	console.log('Writing file...')
-	fs.writeFileSync(config.outputPath, output)
+	await fs.promises.writeFile(config.outputPath, output);
 	// Done!
 	return {
 		success: true,

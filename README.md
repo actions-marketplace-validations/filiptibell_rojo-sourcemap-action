@@ -2,6 +2,16 @@
 
 This action creates a JSON sourcemap file from a Rojo project.
 
+The format generated is equivalent to the following Luau type, which represents an instance tree:
+```luau
+type SourceMapNode = {
+	name: string,
+	className: string,
+	relevantPaths: {string}?,
+	children: {SourceMapNode}?,
+}
+```
+
 ## Inputs
 
 * `output-path` - **Required** - The path where the source map file should be created.

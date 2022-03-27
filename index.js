@@ -391,14 +391,12 @@ const run = async (config) => {
 	const output = JSON.stringify(result.result, null, spacing);
 	console.log('')
 	// Make sure the directories for the
-	// output paths exist, otherwise create
+	// output path exists, otherwise create
 	if (config.outputPath.indexOf('/') !== -1) {
 		console.log('Writing directory...')
 		await ensureDirExists(config.outputPath);
 	}
-	// Write both files as serialized json, I don't
-	// know how to do this in parallel, but that
-	// might speed the action up some more
+	// Write the serialized json file to disk
 	console.log('Writing file...')
 	await fs.promises.writeFile(config.outputPath, output);
 	// Done!

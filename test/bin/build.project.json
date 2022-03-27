@@ -1,0 +1,14 @@
+{
+	"name": "rojo-sourcemap-action",
+	"tree": {
+		"$className": "DataModel",
+		"Workspace": {
+			"$className": "Workspace",
+			"$path": "../src/Workspace"
+		},
+		"ReplicatedStorage": {
+			"$className": "Workspace",
+			"$path": "../src/ReplicatedStorage"
+		}
+	}
+}

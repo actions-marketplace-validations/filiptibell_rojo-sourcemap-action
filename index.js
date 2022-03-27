@@ -107,6 +107,23 @@ const pathIsFile = (path) => {
 	return false;
 }
 
+const cleanupPath = (path, root) => {
+	// Remove working directory so that we get a
+	// path relative to the root of the repository
+	if (root && path.startsWith(root)) {
+		path = path.slice(root.length);
+		if (path.startsWith('/')) {
+			path = path.slice(1);
+		}
+	}
+	// Replace all parts in path where we backtrack
+	// This pattern consists of "(non-slash-stuff)/../"
+	const BACKTRACK = /\/([^\/]+)\/\.\.\//gi
+	path = path.replace(BACKTRACK, '/')
+	// Return result
+	return path;
+}
+
 
 
 
@@ -169,17 +186,11 @@ const buildSourceMapNode = (config, element, parent) => {
 					let listItemText = listItem?.firstChild?.innerText;
 					if (listItemText) {
 						// Make sure that the path exists and that it is a file
-						if (!pathExists(listItemText)) { continue }
-						if (!pathIsFile(listItemText)) { continue }
-						// Remove working directory so that we get a
-						// path relative to the root of the repository
-						if (listItemText.startsWith(config.workDir)) {
-							listItemText = listItemText.slice(config.workDir.length);
-						}
-						if (listItemText.startsWith('/')) {
-							listItemText = listItemText.slice(1);
-						}
-						result.relevantPaths.push(listItemText);
+						if (!pathExists(listItemText)) { continue; }
+						if (!pathIsFile(listItemText)) { continue; }
+						// Insert cleaned up path into relevant paths
+						const cleanPath = cleanupPath(listItemText, config.workDir);
+						result.relevantPaths.push(cleanPath);
 					}
 				}
 			}
@@ -294,7 +305,7 @@ const createSourceMap = (config) => {
 		}
 		// Check for output saying the server
 		// is listening and also if it errors
-		rojo.stdout.on('data', async (data) => {
+		rojo.stdout.on('data', (data) => {
 			if (data.toString().startsWith('Rojo server listening')) {
 				rojoStarted = true;
 			}
@@ -310,7 +321,7 @@ const createSourceMap = (config) => {
 				return;
 			}
 			// Check to make sure we did not enter the interval
-			// callback when we already finished (???)
+			// callback if we had already finished before (???)
 			if (!intervalId) {
 				return;
 			}
@@ -349,12 +360,9 @@ const createSourceMap = (config) => {
 					reject(err);
 				});
 			} else if (rojoError) {
-				// Kill rojo asap
+				// Kill rojo
 				superkill();
-			}
-			// Reject if errored, resolve is above
-			// if we started rojo and didn't error
-			if (rojoError) {
+				// Reject with the error message
 				reject(rojoError);
 			}
 		}, 100);

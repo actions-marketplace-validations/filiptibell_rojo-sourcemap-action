@@ -16,7 +16,7 @@ This action creates a JSON sourcemap file from a Rojo project.
 ## Example usage
 
 ```yaml
-uses: filiptibell/rojo-sourcemap-action@v1.2
+uses: filiptibell/rojo-sourcemap-action@v1.3
 with:
   output-path: 'bin/SourceMap.json'
   project-path: 'default.project.json'

@@ -1,0 +1,27 @@
+name: 'Rojo Sourcemap'
+
+description: 'Creates a source map JSON file for a Rojo project'
+
+inputs:
+  output-path:
+    description: 'The path where the source map file should be created'
+    required: true
+    default: 'SourceMap.json'
+  project-path:
+    description: 'The path to the Rojo project file'
+    required: true
+    default: 'default.project.json'
+  prettify:
+    description: 'If the created JSON file should be in pretty format or not'
+    required: false
+    default: 'false'
+
+outputs:
+  success:
+    description: 'If creating the source map was successful or not'
+  message:
+    description: 'A short message describing the status of the source map'
+
+runs:
+  using: 'node16'
+  main: 'dist/index.js'

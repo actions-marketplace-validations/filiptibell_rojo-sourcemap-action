@@ -1,4 +1,6 @@
-# Rojo sourcemap action
+# Rojo sourcemap
+
+***NOTE:** This action has been superseded by the official `rojo sourcemap` command, implemented in https://github.com/rojo-rbx/rojo/pull/530*
 
 This action creates a JSON sourcemap file from a Rojo project.
 
